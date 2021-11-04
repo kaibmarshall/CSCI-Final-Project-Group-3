@@ -1,4 +1,4 @@
-package CSCI3920.team3.client;
+package CSCI3920.team3.application;
 
 import javafx.application.Application;
 import javafx.application.Platform;
