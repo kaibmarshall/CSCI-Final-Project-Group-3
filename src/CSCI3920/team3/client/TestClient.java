@@ -85,13 +85,14 @@ public class TestClient {
     }
 
     private static void test() {
-        int port = 10000;
+        int port = 10001;
         Server aServer = new Server(port, 100);
         ExecutorService executorService = Executors.newCachedThreadPool();
         executorService.execute(aServer);
         try { Thread.sleep(500);} //giving time for the server to  start
         catch (InterruptedException ignored) { }
         TestClient c = new TestClient("127.0.0.1", port);
+
         c.connect();
 
         try {
