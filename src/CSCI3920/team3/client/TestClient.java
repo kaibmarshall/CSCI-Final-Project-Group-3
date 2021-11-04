@@ -28,16 +28,24 @@ public class TestClient {
         this.serverIp = ip;
         this.isConnected = false;
     }
+
+    public TestClient() {
+        this("127.0.0.1", 10001);
+    }
+
     public boolean isConnected() {
         return this.isConnected;
     }
+
     private PrintWriter getOutputStream() throws IOException {
         return new PrintWriter(this.serverConnection.getOutputStream(), true);
     }
+
     private BufferedReader getInputStream() throws IOException {
         return new BufferedReader(new
                 InputStreamReader(this.serverConnection.getInputStream()));
     }
+
     public void connect() {
         displayMessage("Attempting connection to Server");
         try {
@@ -45,7 +53,7 @@ public class TestClient {
             this.output = this.getOutputStream();
             this.input = this.getInputStream();
             this.isConnected = true;  // at this point, no exception then we're connected!
-                    displayMessage("Connected");
+            displayMessage("Connected");
         } catch (IOException e) { //If something went wrong....
             this.input = null;
             this.output = null;
@@ -54,6 +62,7 @@ public class TestClient {
             displayMessage("Not Connected");
         }
     }
+
     public void disconnect() {
         displayMessage("Disconnecting From Server");
         try {
@@ -73,6 +82,7 @@ public class TestClient {
         }
         displayMessage("Disconnected");
     }
+
     public String sendRequest(String request) throws IOException { //send message and returns the server response.
         displayMessage("Sending>> " + request);
         this.output.println(request);
@@ -80,10 +90,12 @@ public class TestClient {
         displayMessage("Received>> " + srvResponse);
         return srvResponse;
     }
+
     private void displayMessage(String message) {  // We can improve this method to be log-type one
         System.out.println("[CLI]" + message);
     }
 
+    /*
     private static void test() {
         int port = 10001;
         Server aServer = new Server(port, 100);
@@ -120,5 +132,6 @@ public class TestClient {
         test();
         System.out.println("Main Ended");
     }
+    */
 }
 

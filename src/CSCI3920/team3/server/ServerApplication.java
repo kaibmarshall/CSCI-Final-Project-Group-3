@@ -6,7 +6,7 @@ import java.util.concurrent.Executors;
 public class ServerApplication {
     public static void main (String[] args) {
         ExecutorService executorService = Executors.newCachedThreadPool();
-        Server server = new Server(10000, 5);
+        Server server = new Server(10001, 5);
         executorService.execute(server);
     }
 
