@@ -1,11 +1,7 @@
-package CSCI3920.team3.client;
+package CSCI3920.team3.application;
 
-import CSCI3920.team3.client.TestClient;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
+import CSCI3920.team3.client.Client;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
@@ -18,12 +14,12 @@ public class Controller {
     public TextField txtPassword;
     public Button btnLogin;
     public Button btnExit;
-    TestClient client;
+    Client client;
 
 
 
     public Controller(){
-        client = new TestClient();
+        client = new Client();
         client.connect();
 
 

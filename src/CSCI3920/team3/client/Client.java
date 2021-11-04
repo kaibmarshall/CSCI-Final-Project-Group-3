@@ -1,18 +1,12 @@
 package CSCI3920.team3.client;
 
-import CSCI3920.team3.objects.User;
-import CSCI3920.team3.server.Server;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-public class TestClient {
+public class Client {
 
     private final int serverPort;
     private final String serverIp;
@@ -23,13 +17,13 @@ public class TestClient {
     private String currentUserUsername;
     private String currentUserPassword;
 
-    public TestClient(String ip, int port) {
+    public Client(String ip, int port) {
         this.serverPort = port;
         this.serverIp = ip;
         this.isConnected = false;
     }
 
-    public TestClient() {
+    public Client() {
         this("127.0.0.1", 10001);
     }
 
