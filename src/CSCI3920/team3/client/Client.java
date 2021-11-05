@@ -47,7 +47,7 @@ public class Client {
             this.output = this.getOutputStream();
             this.input = this.getInputStream();
             this.isConnected = true;  // at this point, no exception then we're connected!
-            displayMessage("Connected");
+            displayMessage("Connected to Server.");
         } catch (IOException e) { //If something went wrong....
             this.input = null;
             this.output = null;
