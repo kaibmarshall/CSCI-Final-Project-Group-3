@@ -1,22 +1,24 @@
 package CSCI3920.team3.application;
 
 import CSCI3920.team3.client.Client;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
-
 
 public class Controller {
+
 
     public TextField txtUsername;
     public TextField txtPassword;
     public Button btnLogin;
     public Button btnExit;
     Client client;
-    boolean userIsAdmin = false;
 
 
 
@@ -43,12 +45,50 @@ public class Controller {
         String username = txtUsername.getText();
         String password = txtPassword.getText();
         Alert alert;
+        boolean userIsAdmin = false;
 
         try {
             String response = client.sendRequest("L|" + username + "|" + password);
             String[] responses = response.split("\\|");
-            alert = new Alert(Alert.AlertType.CONFIRMATION, response, ButtonType.OK);
+            alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
             alert.show();
+
+
+            if (responses[1].equals("True")) {
+                userIsAdmin = true;
+            } else {
+                userIsAdmin = false;
+            }
+
+            this.exitApplication(actionEvent);
+
+            if (userIsAdmin) {
+                Stage adminStage = new Stage();
+                Parent root = FXMLLoader.load(getClass().getResource("application-admin.fxml"));
+                adminStage.setTitle("University Application");
+                adminStage.setScene(new Scene(root, 1080, 720)); //1080x720 for main
+                adminStage.show();
+
+                adminStage.setOnCloseRequest(e -> {
+                    Platform.exit();
+                    System.exit(0);
+                });
+            } else {
+                Stage adminStage = new Stage();
+                Parent root = FXMLLoader.load(getClass().getResource("application-user.fxml"));
+                adminStage.setTitle("University Application");
+                adminStage.setScene(new Scene(root, 1080, 720)); //1080x720 for main
+                adminStage.show();
+
+                adminStage.setOnCloseRequest(e -> {
+                    Platform.exit();
+                    System.exit(0);
+                });
+
+            }
+
+
+
         }
         catch (IOException ioe) {
             alert = new Alert(Alert.AlertType.CONFIRMATION, "Username or password incorrect", ButtonType.OK);

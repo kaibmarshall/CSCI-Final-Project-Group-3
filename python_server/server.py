@@ -22,11 +22,13 @@ class MultiServer:
         self.__server_socket.close()
 
     def populate_users_for_testing(self):
-        self._user_list.append(User("kai","pass", True))
+        self._user_list.append(User("kai", "pass", True))
+        self._user_list.append(User("cp", "pass", False))
+
 
     def run(self):
         self.populate_users_for_testing()
-        
+
         self.__server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__server_socket.bind((self.__ip, self.__port))
         self.__server_socket.listen(self.__backlog)
@@ -104,14 +106,17 @@ class ClientWorker(Thread):
         self._display_message(f"CLIENT SAID>>>>{client_message}")
 
         arguments = client_message.split("|")
+        self._display_message(arguments[1])
+        self._display_message(arguments[2])
+
         response = ""
 
         try:
             if arguments[0] == "L":
                 is_found = False
                 for user in self.__server.user_list:
-                    if arguments[1] == user.username and arguments[2] == user.password:
-                        response = "Login Successful!|" + user.is_admin + "\n"
+                    if (arguments[1] == user.username) and (arguments[2].rstrip() == user.password):
+                        response = "Login Successful!|" + str(user.is_admin) + "\n"
                         is_found = True
                         break
 
