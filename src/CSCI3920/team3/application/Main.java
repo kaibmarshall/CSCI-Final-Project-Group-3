@@ -13,13 +13,15 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("application.fxml"));
         primaryStage.setTitle("University Application");
-        primaryStage.setScene(new Scene(root, 1080, 720));
+        primaryStage.setScene(new Scene(root, 810, 241)); //1080x720 for main
         primaryStage.show();
 
         primaryStage.setOnCloseRequest(e -> {
             Platform.exit();
             System.exit(0);
         });
+
+
 
 
     }

@@ -21,8 +21,12 @@ class MultiServer:
         self.__keep__running = False
         self.__server_socket.close()
 
+    def populate_users_for_testing(self):
+        self._user_list.append(User("kai","pass", True))
 
     def run(self):
+        self.populate_users_for_testing()
+        
         self.__server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__server_socket.bind((self.__ip, self.__port))
         self.__server_socket.listen(self.__backlog)
@@ -103,8 +107,16 @@ class ClientWorker(Thread):
         response = ""
 
         try:
-            if arguments[0] == "A":
-                response = "Item successfully added!\n"
+            if arguments[0] == "L":
+                is_found = False
+                for user in self.__server.user_list:
+                    if arguments[1] == user.username and arguments[2] == user.password:
+                        response = "Login Successful!|" + user.is_admin + "\n"
+                        is_found = True
+                        break
+
+                if not is_found:
+                    response = "Unrecognized username/password combination\n"
 
             elif arguments[0] == "N":
                 for user in self.__server.user_list:

@@ -6,6 +6,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class Controller {
@@ -15,6 +16,7 @@ public class Controller {
     public Button btnLogin;
     public Button btnExit;
     Client client;
+    boolean userIsAdmin = false;
 
 
 
@@ -43,7 +45,8 @@ public class Controller {
         Alert alert;
 
         try {
-            String response = client.sendRequest("login|" + username + "|" + password);
+            String response = client.sendRequest("L|" + username + "|" + password);
+            String[] responses = response.split("\\|");
             alert = new Alert(Alert.AlertType.CONFIRMATION, response, ButtonType.OK);
             alert.show();
         }
