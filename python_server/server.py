@@ -25,9 +25,15 @@ class MultiServer:
         self._user_list.append(User("kai", "pass", True))
         self._user_list.append(User("cp", "pass", False))
 
+    def populate_items_for_testing(self):
+        self._item_list.append(Item("Macbook", 12.99))
+        self._item_list.append(Item("Windows", 10.99))
+
+
 
     def run(self):
         self.populate_users_for_testing()
+        self.populate_items_for_testing()
 
         self.__server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__server_socket.bind((self.__ip, self.__port))
@@ -63,6 +69,10 @@ class MultiServer:
     @property
     def user_list(self):
         return self._user_list
+
+    @property
+    def item_list(self):
+        return self._item_list
 
 
 class ClientWorker(Thread):
@@ -106,8 +116,6 @@ class ClientWorker(Thread):
         self._display_message(f"CLIENT SAID>>>>{client_message}")
 
         arguments = client_message.split("|")
-        self._display_message(arguments[1])
-        self._display_message(arguments[2])
 
         response = ""
 
@@ -123,9 +131,14 @@ class ClientWorker(Thread):
                 if not is_found:
                     response = "Unrecognized username/password combination\n"
 
+            elif arguments[0] == "I":
+                for item in self.__server.item_list:
+                    response += item.name + "|" + str(item.price_per_day) + "|"
+                response += "\n"
+
             elif arguments[0] == "N":
                 for user in self.__server.user_list:
-                    response += user._username + "|"
+                    response += user.username + "|\n"
 
             elif arguments[0] == "T":
                 self.terminate_connection()

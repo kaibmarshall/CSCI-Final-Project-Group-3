@@ -5,10 +5,10 @@ import java.util.ArrayList;
 
 public class Item {
     private String name;
-    private double pricePerDay;
+    private String pricePerDay;
     private ArrayList<LocalDate> datesRented;
 
-    public Item(String name, double pricePerDay) {
+    public Item(String name, String pricePerDay) {
         this.name = name;
         this.pricePerDay = pricePerDay;
     }
@@ -21,11 +21,11 @@ public class Item {
         this.name = name;
     }
 
-    public double getPricePerDay() {
+    public String getPricePerDay() {
         return pricePerDay;
     }
 
-    public void setPricePerDay(double pricePerDay) {
+    public void setPricePerDay(String pricePerDay) {
         this.pricePerDay = pricePerDay;
     }
 
@@ -47,5 +47,14 @@ public class Item {
 
     public boolean isAvailable(LocalDate date) {
         return !datesRented.contains(date);
+    }
+
+    @Override
+    public String toString() {
+        return "Item{" +
+                "name='" + name + '\'' +
+                ", pricePerDay='" + pricePerDay + '\'' +
+                ", datesRented=" + datesRented +
+                '}';
     }
 }

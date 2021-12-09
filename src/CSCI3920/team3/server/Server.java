@@ -34,19 +34,19 @@ public class Server implements Runnable{
     }
 
     public void populateListsForTesting() {
-        users.add(new User("kaibmarshall", "password", true));
-        users.add(new User("ahmed", "password", true));
-        users.add(new User("kyung", "password", true));
-        users.add(new User("user1", "password", false));
-        users.add(new User("user2", "password", false));
-        users.add(new User("user3", "password", false));
-
-        items.add(new Item("Acer Laptop", 12.99));
-        items.add(new Item("Samsung External SSD", 4.99));
-        items.add(new Item("Macbook Pro", 12.99));
-        items.add(new Item("Razer Mouse", 2.99));
-        items.add(new Item("SomeBrand Keyboard", 2.99));
-        items.add(new Item("SomeOther Item", 15.99));
+//        users.add(new User("kaibmarshall", "password", true));
+//        users.add(new User("ahmed", "password", true));
+//        users.add(new User("kyung", "password", true));
+//        users.add(new User("user1", "password", false));
+//        users.add(new User("user2", "password", false));
+//        users.add(new User("user3", "password", false));
+//
+//        items.add(new Item("Acer Laptop", 12.99));
+//        items.add(new Item("Samsung External SSD", 4.99));
+//        items.add(new Item("Macbook Pro", 12.99));
+//        items.add(new Item("Razer Mouse", 2.99));
+//        items.add(new Item("SomeBrand Keyboard", 2.99));
+//        items.add(new Item("SomeOther Item", 15.99));
 
     }
 

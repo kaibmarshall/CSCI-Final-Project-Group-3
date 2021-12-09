@@ -46,11 +46,10 @@
                                 </HBox>
                                 <TextField fx:id="SearchItemText" layoutX="816.0" layoutY="39.0" />
                                 <Button fx:id="SearchItem" layoutX="689.0" layoutY="37.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="110.0" text="Search" />
-                                <TableView layoutY="121.0" prefHeight="430.0" prefWidth="1080.0">
+                                <TableView fx:id="inventoryList" layoutY="121.0" prefHeight="430.0" prefWidth="1080.0">
                                     <columns>
-                                        <TableColumn fx:id="ItemName" prefWidth="319.0" text="Item Name" />
-                                        <TableColumn fx:id="PricePerDay" prefWidth="387.0" text="Price Per Day" />
-                                        <TableColumn fx:id="Availability" prefWidth="373.0" text="Availability" />
+                                        <TableColumn fx:id="ItemName" prefWidth="528.8465579748154" text="Item Name" />
+                                        <TableColumn fx:id="PricePerDay" prefWidth="550.6534423828125" text="Price Per Day" />
                                     </columns>
                                 </TableView>
                             </children>
