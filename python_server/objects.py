@@ -45,14 +45,20 @@ class User:
     def is_admin(self):
         return self._is_admin
 
-    def rent_item(self, item :Item):
+    def rent_item(self, item: Item):
         self._rented_items.append(item)
 
-    def return_item(self, item :Item):
+    def return_item(self, item: Item):
         if item in self._rented_items:
             self._rented_items.remove(item)
             return True
         else:
             return False
+
+    def __str__(self):
+        return_string = self._username + " with items: "
+        for item in self._rented_items:
+            return_string += item.name + "\n"
+        return return_string
 
 

@@ -56,14 +56,14 @@
                         </AnchorPane>
                     </content>
                 </Tab>
-                <Tab text="User Info">
+                <Tab fx:id="tabUserInfo" onSelectionChanged="#userRentedItemsUpdate" text="User Info">
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: white;">
                             <children>
-                                <TableView layoutY="112.0" prefHeight="430.0" prefWidth="1080.0">
+                                <TableView fx:id="userRentedItems" layoutY="112.0" prefHeight="430.0" prefWidth="1080.0">
                                     <columns>
-                                        <TableColumn fx:id="UserRentedItem" prefWidth="545.0" text="Rented Items" />
-                                        <TableColumn minWidth="0.0" prefWidth="0.0" text="C2" />
+                                        <TableColumn fx:id="UserRentedItem" prefWidth="541.2584232091904" text="Rented Items" />
+                              <TableColumn fx:id="UserPricePerDay" prefWidth="610.24169921875" text="Price Per Day" />
                                     </columns>
                                 </TableView>
                                 <Label layoutX="8.0" layoutY="-8.0" prefHeight="104.0" prefWidth="223.0" text="Rented Items">
@@ -75,7 +75,7 @@
                                 <TextField fx:id="SearchUserText" layoutX="871.0" layoutY="32.0" />
                                 <HBox layoutX="140.0" layoutY="542.0" prefHeight="100.0" prefWidth="927.0">
                                     <children>
-                                        <Button fx:id="RemoveUser" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="110.0" text="Return Item">
+                                        <Button fx:id="returnItem" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#returnSelectedItem" prefHeight="30.0" prefWidth="110.0" text="Return Item">
                                             <HBox.margin>
                                                 <Insets right="30.0" top="5.0" />
                                             </HBox.margin>

@@ -13,6 +13,8 @@ class MultiServer:
         self.__connection_count = 0
         self.__list_cw = []
 
+        self.current_users = {}
+
         self._user_list = []
         self._item_list = []
 
@@ -22,7 +24,11 @@ class MultiServer:
         self.__server_socket.close()
 
     def populate_users_for_testing(self):
-        self._user_list.append(User("kai", "pass", True))
+        user = User("kai", "pass", False)
+        user.rent_item(Item("Macbook", 12.99))
+        user.rent_item(Item("anotha", 12.99))
+
+        self._user_list.append(user)
         self._user_list.append(User("cp", "pass", False))
 
     def populate_items_for_testing(self):
@@ -44,8 +50,8 @@ class MultiServer:
             try:
                 client_socket, client_address = self.__server_socket.accept()
                 print(f"""[SRV] Got a connection from {client_address}""")
-                self.__connection_count +=1
                 cw = ClientWorker(self.__connection_count, client_socket, self)
+                self.__connection_count += 1
                 self.__list_cw.append(cw)
                 cw.start()
             except Exception as e:
@@ -76,7 +82,7 @@ class MultiServer:
 
 
 class ClientWorker(Thread):
-    def __init__(self, client_id: int, client_socket: socket, server: MultiServer):
+    def __init__(self, client_id: int, client_socket: socket, server: MultiServer, currentUser = None):
         super().__init__()
 
         self.__client_socket = client_socket
@@ -84,6 +90,9 @@ class ClientWorker(Thread):
         self.__server = server
         self.__id = client_id
 
+    @property
+    def id(self):
+        return self.__id
 
     def run(self):
         #self._send_message("Connected to Python Inventory Server")
@@ -98,24 +107,26 @@ class ClientWorker(Thread):
         self.__client_socket.close()
 
     def _display_message(self, message: str):
-        print(f"CLIENT >> {message}")
+        print(f"[SRV] {message}")
 
     def _send_message (self, msg:str):
-        self._display_message(f"""SEND>> {msg}""")
+        self._display_message(f"""SENDING>>{msg}""")
         self.__client_socket.send(msg.encode("UTF-8"))
         pass
 
     def _receive_message(self, max_length:int = 1024):
         msg = self.__client_socket.recv(max_length).decode("UTF-8")
-        self._display_message(f"""[SRV] RCV>> {msg}""")
+        self._display_message(f"""RECEIVED>>{msg}""")
         return msg
 
 
     def _process_client_request(self):
         client_message = self._receive_message()
-        self._display_message(f"CLIENT SAID>>>>{client_message}")
+        self._display_message(f"CLIENT REQUEST>>{client_message}")
 
         arguments = client_message.split("|")
+        current_user = self.__server.current_users.get(int(self.id - 1))
+        # minus one for indexing reasons
 
         response = ""
 
@@ -124,21 +135,44 @@ class ClientWorker(Thread):
                 is_found = False
                 for user in self.__server.user_list:
                     if (arguments[1] == user.username) and (arguments[2].rstrip() == user.password):
-                        response = "Login Successful!|" + str(user.is_admin) + "\n"
+                        response = "Login Successful!|" + str(user.is_admin) + "|success" + "\n"
                         is_found = True
+                        self.__server.current_users[self.id] = self.__server.current_users.get(self.id, user)
+                        print(self.__server.current_users)
                         break
 
                 if not is_found:
-                    response = "Unrecognized username/password combination\n"
+                    response = "Unrecognized username/password combination|False|fail\n"
 
             elif arguments[0] == "I":
                 for item in self.__server.item_list:
                     response += item.name + "|" + str(item.price_per_day) + "|"
                 response += "\n"
 
-            elif arguments[0] == "N":
+            elif arguments[0] == "U":
                 for user in self.__server.user_list:
-                    response += user.username + "|\n"
+                    response += user.username + "|"
+                response += "\n"
+
+            elif arguments[0] == "R":
+                for item in current_user.rented_items:
+                    if arguments[1] == item.name:
+                        response += "Item Returned!"
+                        current_user.return_item(item)
+                        break
+                response += "\n"
+
+            elif arguments[0] == "GRI":
+
+                is_found = False
+
+                if len(current_user.rented_items) == 0:
+                    response = "none"
+                else:
+                    for item in current_user.rented_items:
+                        response += item.name + "|" + str(item.price_per_day) + "|"
+
+                response += "\n"
 
             elif arguments[0] == "T":
                 self.terminate_connection()
