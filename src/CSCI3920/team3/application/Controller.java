@@ -12,6 +12,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import CSCI3920.team3.objects.Item;
+
 import CSCI3920.team3.objects.User;
 
 import java.awt.event.MouseEvent;
@@ -27,6 +28,10 @@ public class Controller {
     public TableView<Item> inventoryList;
     public TableColumn ItemName;
     public TableColumn PricePerDay;
+    public TableView<Item> adminInventoryList;
+    public TableColumn adminItemName;
+    public TableColumn adminUserRentingItem;
+    public TableColumn adminPricePerDay;
     public Tab tabListInventory;
     public TableView<Item> userRentedItems;
     public TableColumn UserRentedItem;
@@ -34,11 +39,14 @@ public class Controller {
     public Tab tabUserInfo;
     public Button returnItem;
     public Button checkOutItem;
-
-
+    public Button btnAdminRemoveItem;
+    public TextField txtAddItemName;
+    public TextField txtAddItemPrice;
+    public Button btnAddItem;
 
     public Item itemToReturn;
     public Item itemToRent;
+    public Item itemToRemove;
 
     Client client;
 
@@ -62,11 +70,12 @@ public class Controller {
         try {
             String response = client.sendRequest("L|" + username + "|" + password);
             String[] responses = response.split("\\|");
-            alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
-            alert.show();
+
 
             if (responses[2].equals("success")) {
 
+                alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+                alert.show();
                 this.client.setCurrentUser(username);
 
                 if (responses[1].equals("True"))
@@ -106,7 +115,7 @@ public class Controller {
             }
         }
         catch (IOException ioe) {
-            alert = new Alert(Alert.AlertType.CONFIRMATION, "Username or password incorrect", ButtonType.OK);
+            alert = new Alert(Alert.AlertType.CONFIRMATION, ioe.getMessage(), ButtonType.OK);
             alert.show();
         }
 
@@ -121,6 +130,10 @@ public class Controller {
                 if (response.equals("none")){
                     ArrayList<Item> items = new ArrayList<>();
                     items.add(new Item("No items in inventory", ""));
+
+                    ItemName.setCellValueFactory(new PropertyValueFactory<>("name"));
+                    PricePerDay.setCellValueFactory(new PropertyValueFactory<>("pricePerDay"));
+
                     inventoryList.setItems(FXCollections.observableArrayList(items));
                 } else {
                     String[] responses = response.split("\\|");
@@ -147,6 +160,52 @@ public class Controller {
                 }
             } catch (Exception e) {
                 alert = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
+                alert.show();
+            }
+        }
+    }
+
+    public void adminListInventoryUpdate() {
+        Alert alert;
+
+        if (this.tabListInventory.isSelected()) {
+            try {
+                String response = client.sendRequest("adminI|");
+                if (response.equals("none")){
+                    ArrayList<Item> items = new ArrayList<>();
+                    items.add(new Item("No items in inventory","", ""));
+
+                    adminItemName.setCellValueFactory(new PropertyValueFactory<>("name"));
+                    adminUserRentingItem.setCellValueFactory(new PropertyValueFactory<>("userRentedTo"));
+                    adminPricePerDay.setCellValueFactory(new PropertyValueFactory<>("pricePerDay"));
+
+                    adminInventoryList.setItems(FXCollections.observableArrayList(items));
+                } else {
+                    String[] responses = response.split("\\|");
+
+                    adminItemName.setCellValueFactory(new PropertyValueFactory<>("name"));
+                    adminUserRentingItem.setCellValueFactory(new PropertyValueFactory<>("userRentedTo"));
+                    adminPricePerDay.setCellValueFactory(new PropertyValueFactory<>("pricePerDay"));
+
+                    ArrayList<Item> items = new ArrayList<>();
+
+                    for (int i = 0; i < responses.length; i += 3) {
+                        items.add(new Item(responses[i], responses[i + 1], responses[i + 2]));
+                    }
+
+                    adminInventoryList.setItems(FXCollections.observableArrayList(items));
+                    adminInventoryList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+                    adminInventoryList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+                        if (adminInventoryList.getSelectionModel().getSelectedItem() != null) {
+                            Item item = newValue;
+                            this.itemToRemove = item;
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                alert = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
+                e.printStackTrace();
                 alert.show();
             }
         }
@@ -229,6 +288,44 @@ public class Controller {
 
     }
 
+    public void adminRemoveItem(ActionEvent actionEvent) {
+        Alert alert;
+        try {
+            String response = client.sendRequest("adminR|" + this.itemToRemove.getName() + "|");
+            String[] responses = response.split("\\|");
+            alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+            alert.show();
+            adminListInventoryUpdate();
+        }
+        catch (IOException ioe){
+            alert = new Alert(Alert.AlertType.CONFIRMATION, ioe.getMessage(), ButtonType.OK);
+            alert.show();
+        }
+    }
+
+    public void adminAddItem(ActionEvent actionEvent) {
+        String itemName = txtAddItemName.getText();
+        String itemPrice = txtAddItemPrice.getText();
+        Alert alert;
+
+        try {
+            String response = client.sendRequest("adminA|" + itemName + "|" + itemPrice + "|");
+            String[] responses = response.split("\\|");
+            alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+            alert.show();
+            adminListInventoryUpdate();
+            cleanAddItem();
+        }
+        catch (IOException ioe){
+            alert = new Alert(Alert.AlertType.CONFIRMATION, ioe.getMessage(), ButtonType.OK);
+            alert.show();
+        }
+    }
+
+    public void cleanAddItem() {
+        this.txtAddItemPrice.setText("$");
+        this.txtAddItemName.setText("");
+    }
 
     public void exitApplication(ActionEvent actionEvent) {
         Stage stage = (Stage) this.btnExit.getScene().getWindow();

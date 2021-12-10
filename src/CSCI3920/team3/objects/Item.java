@@ -5,12 +5,23 @@ import java.util.ArrayList;
 
 public class Item {
     private String name;
+    private String userRentedTo;
     private String pricePerDay;
     private ArrayList<LocalDate> datesRented;
 
     public Item(String name, String pricePerDay) {
         this.name = name;
         this.pricePerDay = pricePerDay;
+    }
+
+    public Item(String name, String userRentedTo, String pricePerDay) {
+        this.name = name;
+        this.userRentedTo = userRentedTo;
+        this.pricePerDay = pricePerDay;
+    }
+
+    public String getUserRentedTo() {
+        return userRentedTo;
     }
 
     public String getName() {
@@ -55,6 +66,7 @@ public class Item {
                 "name='" + name + '\'' +
                 ", pricePerDay='" + pricePerDay + '\'' +
                 ", datesRented=" + datesRented +
+                ", userRenting=" + userRentedTo +
                 '}';
     }
 }

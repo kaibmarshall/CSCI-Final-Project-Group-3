@@ -24,16 +24,16 @@ class MultiServer:
         self.__server_socket.close()
 
     def populate_users_for_testing(self):
-        user = User("kai", "pass", False)
-        user.rent_item(Item("Macbook", 12.99))
-        user.rent_item(Item("anotha", 12.99))
+        user = User("kai", "pass", True)
+        user.rent_item(Item("Macbook Air", 12.99))
+        user.rent_item(Item("Seagate SSD", 12.99))
 
         self._user_list.append(user)
         self._user_list.append(User("cp", "pass", False))
 
     def populate_items_for_testing(self):
-        self._item_list.append(Item("Macbook", 12.99))
-        self._item_list.append(Item("Windows", 10.99))
+        self._item_list.append(Item("Macbook Pro", 12.99))
+        self._item_list.append(Item("Windows Laptop", 10.99))
 
 
 
@@ -119,6 +119,15 @@ class ClientWorker(Thread):
         self._display_message(f"""RECEIVED>>{msg}""")
         return msg
 
+    def get_all_items(self):
+        returnString = ""
+        for item in self.__server.item_list:
+            returnString += item.name + "|" + "N/A" + "|" + str(item.price_per_day) + "|"
+        for user in self.__server.user_list:
+            if len(user.rented_items) != 0:
+                for item in user.rented_items:
+                    returnString += item.name + "|" + user.username + "|" + str(item.price_per_day) + "|"
+        return returnString
 
     def _process_client_request(self):
         client_message = self._receive_message()
@@ -138,7 +147,6 @@ class ClientWorker(Thread):
                         response = "Login Successful!|" + str(user.is_admin) + "|success" + "\n"
                         is_found = True
                         self.__server.current_users[self.id] = self.__server.current_users.get(self.id, user)
-                        print(self.__server.current_users)
                         break
 
                 if not is_found:
@@ -150,6 +158,40 @@ class ClientWorker(Thread):
                 else:
                     for item in self.__server.item_list:
                         response += item.name + "|" + str(item.price_per_day) + "|"
+                response += "\n"
+
+            elif arguments[0] == "adminI":
+                if len(self.__server.item_list) == 0:
+                    response += "none"
+                else:
+                    response += self.get_all_items()
+                response += "\n"
+
+            elif arguments[0] == "adminR":
+                if len(self.__server.item_list) == 0:
+                    response += "none"
+                else:
+                    is_found = False
+                    for item in self.__server.item_list:
+                        if item.name == arguments[1]:
+                            self.__server.item_list.remove(item)
+                            is_found = True
+                            response += "Item Successfully Removed!"
+                            break
+                    if not is_found:
+                        response += "Item either not in inventory or currently rented by a user."
+
+            elif arguments[0] == "adminA":
+                is_valid = True
+                for item in self.__server.item_list:
+                    if item.name == arguments[1]:
+                        response += "Items can't have the same name."
+                        is_valid = False
+                        break
+
+                if is_valid:
+                    self.__server.item_list.append(Item(arguments[1], float(arguments[2].strip('$'))))
+                    response += "Item successfully added!"
                 response += "\n"
 
             elif arguments[0] == "U":
