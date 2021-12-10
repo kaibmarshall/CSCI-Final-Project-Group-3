@@ -14,8 +14,7 @@ public class Client {
     private Socket serverConnection;
     private PrintWriter output;
     private BufferedReader input;
-    private String currentUserUsername;
-    private String currentUserPassword;
+    public String currentUser;
 
     public Client(String ip, int port) {
         this.serverPort = port;
@@ -88,6 +87,16 @@ public class Client {
     private void displayMessage(String message) {  // We can improve this method to be log-type one
         System.out.println("[CLI]" + message);
     }
+
+    public String getCurrentUser() {
+        return this.currentUser;
+    }
+
+    public void setCurrentUser(String username) {
+        this.currentUser = username;
+    }
+
+
 
     /*
     private static void test() {
