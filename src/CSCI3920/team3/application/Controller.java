@@ -15,6 +15,7 @@ import CSCI3920.team3.objects.Item;
 
 import CSCI3920.team3.objects.User;
 
+import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,6 +50,9 @@ public class Controller {
     public TableColumn userPassword;
     public TableColumn userIsAdmin;
     public Button RemoveUser;
+    public TextField txtAddUserUsername;
+    public TextField txtAddUserPassword;
+    public Button btnAddUser;
 
     public Item itemToReturn;
     public Item itemToRent;
@@ -81,16 +85,12 @@ public class Controller {
 
             if (responses[2].equals("success")) {
 
-                alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
-                alert.show();
-                this.client.setCurrentUser(username);
-
                 if (responses[1].equals("True"))
                     userIsAdmin = true;
                 else
                     userIsAdmin = false;
 
-                this.exitApplication(actionEvent);
+                this.closeWindow(actionEvent);
 
                 if (userIsAdmin) {
                     Stage adminStage = new Stage();
@@ -98,8 +98,6 @@ public class Controller {
                     adminStage.setTitle("University Application");
                     adminStage.setScene(new Scene(root, 1080, 720)); //1080x720 for main
                     adminStage.show();
-                    adminStage.toBack();
-
 
                     adminStage.setOnCloseRequest(e -> {
                         Platform.exit();
@@ -111,7 +109,6 @@ public class Controller {
                     userStage.setTitle("University Application");
                     userStage.setScene(new Scene(root, 1080, 720)); //1080x720 for main
                     userStage.show();
-                    userStage.toBack();
 
                     userStage.setOnCloseRequest(e -> {
                         Platform.exit();
@@ -119,6 +116,10 @@ public class Controller {
                     });
 
                 }
+            } else if(responses[2].equals("fail")) {
+                alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+                alert.show();
+                cleanLoginPage();
             }
         }
         catch (IOException ioe) {
@@ -126,6 +127,11 @@ public class Controller {
             alert.show();
         }
 
+    }
+
+    public void cleanLoginPage() {
+        txtUsername.setText("");
+        txtPassword.setText("");
     }
 
     public void listInventoryUpdate() {
@@ -395,9 +401,41 @@ public class Controller {
         }
     }
 
+    public void adminAddUser(ActionEvent actionEvent) {
+        String userUsername = txtAddUserUsername.getText();
+        String userPassword = txtAddUserPassword.getText();
+        Alert alert;
 
+        try {
+            String response = client.sendRequest("adminAU|" + userUsername + "|" + userPassword + "|");
+            String[] responses = response.split("\\|");
+            alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+            alert.show();
+            adminTabUsersUpdate();
+            cleanAddUser();
+        }
+        catch (IOException ioe){
+            alert = new Alert(Alert.AlertType.CONFIRMATION, ioe.getMessage(), ButtonType.OK);
+            alert.show();
+        }
+    }
+
+    public void cleanAddUser() {
+        this.txtAddUserUsername.setText("");
+        this.txtAddUserPassword.setText("");
+    }
+
+    public void closeWindow(ActionEvent actionEvent){
+        Stage stage = (Stage) this.btnExit.getScene().getWindow();
+        stage.close();
+    }
 
     public void exitApplication(ActionEvent actionEvent) {
+        try {
+            client.sendRequest("T|");
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
         Stage stage = (Stage) this.btnExit.getScene().getWindow();
         stage.close();
     }

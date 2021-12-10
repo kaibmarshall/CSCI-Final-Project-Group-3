@@ -140,18 +140,13 @@
                            <children>
                               <Label text="Username" />
                               <Label layoutX="110.0" layoutY="48.0" text="Password" GridPane.rowIndex="1" />
-                              <TextField fx:id="NameAddUserText" GridPane.columnIndex="1" />
-                              <TextField fx:id="AddRentedItemText" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <TextField fx:id="txtAddUserUsername" GridPane.columnIndex="1" />
+                              <TextField fx:id="txtAddUserPassword" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                            </children>
                         </GridPane>
-                        <Button layoutX="494.0" layoutY="478.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="121.0" text="Add User" />
+                        <Button fx:id="btnAddUser" layoutX="494.0" layoutY="478.0" mnemonicParsing="false" onAction="#adminAddUser" prefHeight="47.0" prefWidth="121.0" text="Add User" />
                      </children>
                   </AnchorPane>
-               </content>
-            </Tab>
-            <Tab text="Search">
-               <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                </content>
             </Tab>
         </tabs>

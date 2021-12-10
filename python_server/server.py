@@ -140,6 +140,7 @@ class ClientWorker(Thread):
         response = ""
 
         try:
+            # client attempting to login
             if arguments[0] == "L":
                 is_found = False
                 for user in self.__server.user_list:
@@ -152,6 +153,7 @@ class ClientWorker(Thread):
                 if not is_found:
                     response = "Unrecognized username/password combination|False|fail\n"
 
+            # user-client requesting available items in inventory
             elif arguments[0] == "I":
                 if len(self.__server.item_list) == 0:
                     response += "none"
@@ -160,6 +162,7 @@ class ClientWorker(Thread):
                         response += item.name + "|" + str(item.price_per_day) + "|"
                 response += "\n"
 
+            # admin-client requesting all items
             elif arguments[0] == "adminI":
                 if len(self.__server.item_list) == 0:
                     response += "none"
@@ -167,6 +170,7 @@ class ClientWorker(Thread):
                     response += self.get_all_items()
                 response += "\n"
 
+            # admin-client attempting removal of an Item
             elif arguments[0] == "adminR":
                 if len(self.__server.item_list) == 0:
                     response += "none"
@@ -180,7 +184,9 @@ class ClientWorker(Thread):
                             break
                     if not is_found:
                         response += "Item either not in inventory or currently rented by a user."
+                response += "\n"
 
+            # admin-client attempting removal of an User
             elif arguments[0] == "adminRU":
                 if len(self.__server.user_list) == 0:
                     response += "none"
@@ -202,6 +208,7 @@ class ClientWorker(Thread):
 
                 response += "\n"
 
+            # admin-client requesting all users
             elif arguments[0] == "adminUL":
                 if len(self.__server.user_list) == 0:
                     response += "none"
@@ -210,6 +217,7 @@ class ClientWorker(Thread):
                         response += user.username + "|" + user.password + "|" + str(user.is_admin) + "|"
                 response += "\n"
 
+            # admin-client attempting addition of Item
             elif arguments[0] == "adminA":
                 is_valid = True
                 for item in self.__server.item_list:
@@ -223,11 +231,21 @@ class ClientWorker(Thread):
                     response += "Item successfully added!"
                 response += "\n"
 
-            elif arguments[0] == "U":
+            # admin-client attempting addition of User
+            elif arguments[0] == "adminAU":
+                is_valid = True
                 for user in self.__server.user_list:
-                    response += user.username + "|"
+                    if user.username == arguments[1]:
+                        response += "Users can't have the same username."
+                        is_valid = False
+                        break
+
+                if is_valid:
+                    self.__server.user_list.append(User(arguments[1], arguments[2], False))
+                    response += "User successfully added!"
                 response += "\n"
 
+            # user-client attempting to return a rented item
             elif arguments[0] == "R":
                 for item in current_user.rented_items:
                     if arguments[1] == item.name:
@@ -237,6 +255,7 @@ class ClientWorker(Thread):
                         break
                 response += "\n"
 
+            # user-client attempting to [C]heck out (rent) and item
             elif arguments[0] == "C":
                 for item in self.__server.item_list:
                     if arguments[1] == item.name:
@@ -246,6 +265,7 @@ class ClientWorker(Thread):
                         break
                 response += "\n"
 
+            # user-client requesting their rented items
             elif arguments[0] == "GRI":
 
                 is_found = False
@@ -258,9 +278,12 @@ class ClientWorker(Thread):
 
                 response += "\n"
 
+            # client terminate
             elif arguments[0] == "T":
-                self.terminate_connection()
                 response = "OK|T\n"
+                self._send_message(response)
+                self.terminate_connection()
+                return
 
             elif arguments[0] == "TERMINATE":
                 response = "OK\n"
