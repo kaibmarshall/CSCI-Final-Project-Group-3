@@ -33,8 +33,12 @@ public class Controller {
     public TableColumn UserPricePerDay;
     public Tab tabUserInfo;
     public Button returnItem;
+    public Button checkOutItem;
+
+
 
     public Item itemToReturn;
+    public Item itemToRent;
 
     Client client;
 
@@ -114,20 +118,33 @@ public class Controller {
         if (this.tabListInventory.isSelected()) {
             try {
                 String response = client.sendRequest("I|");
-                String[] responses = response.split("\\|");
+                if (response.equals("none")){
+                    ArrayList<Item> items = new ArrayList<>();
+                    items.add(new Item("No items in inventory", ""));
+                    inventoryList.setItems(FXCollections.observableArrayList(items));
+                } else {
+                    String[] responses = response.split("\\|");
 
-                ItemName.setCellValueFactory(new PropertyValueFactory<>("name"));
-                PricePerDay.setCellValueFactory(new PropertyValueFactory<>("pricePerDay"));
+                    ItemName.setCellValueFactory(new PropertyValueFactory<>("name"));
+                    PricePerDay.setCellValueFactory(new PropertyValueFactory<>("pricePerDay"));
 
-                ArrayList<Item> items = new ArrayList<>();
+                    ArrayList<Item> items = new ArrayList<>();
 
-                for (int i = 0; i < responses.length ; i += 2) {
-                    items.add(new Item(responses[i], responses[i+1]));
+                    for (int i = 0; i < responses.length; i += 2) {
+                        items.add(new Item(responses[i], responses[i + 1]));
+                    }
+
+                    inventoryList.setItems(FXCollections.observableArrayList(items));
+                    inventoryList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+                    inventoryList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+                        //Check whether item is selected and set value of selected item to Label
+                        if (inventoryList.getSelectionModel().getSelectedItem() != null) {
+                            Item item = newValue;
+                            this.itemToRent = item;
+                        }
+                    });
                 }
-
-                inventoryList.setItems(FXCollections.observableArrayList(items));
-                inventoryList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
             } catch (Exception e) {
                 alert = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
                 alert.show();
@@ -194,6 +211,22 @@ public class Controller {
             alert = new Alert(Alert.AlertType.CONFIRMATION, ioe.getMessage(), ButtonType.OK);
             alert.show();
         }
+    }
+
+    public void checkOutSelectedItem(ActionEvent actionEvent){
+        Alert alert;
+        try {
+            String response = client.sendRequest("C|" + this.itemToRent.getName() + "|");
+            String[] responses = response.split("\\|");
+            alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+            alert.show();
+            listInventoryUpdate();
+        }
+        catch (IOException ioe){
+            alert = new Alert(Alert.AlertType.CONFIRMATION, ioe.getMessage(), ButtonType.OK);
+            alert.show();
+        }
+
     }
 
 

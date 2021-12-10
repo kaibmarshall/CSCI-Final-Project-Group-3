@@ -145,8 +145,11 @@ class ClientWorker(Thread):
                     response = "Unrecognized username/password combination|False|fail\n"
 
             elif arguments[0] == "I":
-                for item in self.__server.item_list:
-                    response += item.name + "|" + str(item.price_per_day) + "|"
+                if len(self.__server.item_list) == 0:
+                    response += "none"
+                else:
+                    for item in self.__server.item_list:
+                        response += item.name + "|" + str(item.price_per_day) + "|"
                 response += "\n"
 
             elif arguments[0] == "U":
@@ -159,6 +162,16 @@ class ClientWorker(Thread):
                     if arguments[1] == item.name:
                         response += "Item Returned!"
                         current_user.return_item(item)
+                        self.__server.item_list.append(item)
+                        break
+                response += "\n"
+
+            elif arguments[0] == "C":
+                for item in self.__server.item_list:
+                    if arguments[1] == item.name:
+                        response += "Item Rented!"
+                        current_user.rent_item(item)
+                        self.__server.item_list.remove(item)
                         break
                 response += "\n"
 
