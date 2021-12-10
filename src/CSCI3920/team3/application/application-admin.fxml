@@ -88,15 +88,15 @@
                   </AnchorPane>
               </content>
             </Tab>
-            <Tab text="Users">
+            <Tab fx:id="tabUsers" onSelectionChanged="#adminTabUsersUpdate" text="Users">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: white;">
                      <children>
-                        <TableView layoutY="112.0" prefHeight="430.0" prefWidth="1080.0">
+                        <TableView fx:id="userList" layoutY="112.0" prefHeight="430.0" prefWidth="1080.0">
                           <columns>
-                            <TableColumn fx:id="UserName" prefWidth="534.0" text="Name" />
-                            <TableColumn fx:id="UserRentedItem" prefWidth="545.0" text="Rented Items" />
-                              <TableColumn minWidth="0.0" prefWidth="0.0" text="C2" />
+                            <TableColumn fx:id="userUsername" prefWidth="358.70730608701706" text="Username" />
+                            <TableColumn fx:id="userPassword" prefWidth="348.7783508300781" text="Password" />
+                              <TableColumn fx:id="userIsAdmin" prefWidth="371.00006103515625" text="Admin" />
                           </columns>
                         </TableView>
                         <Label layoutX="8.0" layoutY="-8.0" prefHeight="104.0" prefWidth="98.0" text="Users">
@@ -108,7 +108,7 @@
                         <TextField fx:id="SearchUserText" layoutX="871.0" layoutY="32.0" />
                         <HBox layoutX="140.0" layoutY="542.0" prefHeight="100.0" prefWidth="927.0">
                            <children>
-                              <Button fx:id="RemoveUser" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="110.0" text="Remove">
+                              <Button fx:id="RemoveUser" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#adminRemoveUser" prefHeight="30.0" prefWidth="110.0" text="Remove">
                                  <HBox.margin>
                                     <Insets right="30.0" top="5.0" />
                                  </HBox.margin>

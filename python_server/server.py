@@ -181,6 +181,35 @@ class ClientWorker(Thread):
                     if not is_found:
                         response += "Item either not in inventory or currently rented by a user."
 
+            elif arguments[0] == "adminRU":
+                if len(self.__server.user_list) == 0:
+                    response += "none"
+                elif arguments[1] == current_user.username:
+                    response += "Cannot remove self."
+                else:
+                    is_found = False
+                    for user in self.__server.user_list:
+                        if user.username == arguments[1]:
+                            for item in user.rented_items:
+                                self.__server.item_list.append(item)
+
+                            self.__server.user_list.remove(user)
+                            is_found = True
+                            response += "User Successfully Removed!"
+                            break
+                    if not is_found:
+                        response += "User not found."
+
+                response += "\n"
+
+            elif arguments[0] == "adminUL":
+                if len(self.__server.user_list) == 0:
+                    response += "none"
+                else:
+                    for user in self.__server.user_list:
+                        response += user.username + "|" + user.password + "|" + str(user.is_admin) + "|"
+                response += "\n"
+
             elif arguments[0] == "adminA":
                 is_valid = True
                 for item in self.__server.item_list:

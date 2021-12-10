@@ -43,10 +43,17 @@ public class Controller {
     public TextField txtAddItemName;
     public TextField txtAddItemPrice;
     public Button btnAddItem;
+    public Tab tabUsers;
+    public TableView<User> userList;
+    public TableColumn userUsername;
+    public TableColumn userPassword;
+    public TableColumn userIsAdmin;
+    public Button RemoveUser;
 
     public Item itemToReturn;
     public Item itemToRent;
     public Item itemToRemove;
+    public User userToRemove;
 
     Client client;
 
@@ -326,6 +333,69 @@ public class Controller {
         this.txtAddItemPrice.setText("$");
         this.txtAddItemName.setText("");
     }
+
+    public void adminTabUsersUpdate() {
+        Alert alert;
+
+        if (this.tabUsers.isSelected()) {
+            try {
+                String response = client.sendRequest("adminUL|");
+                if (response.equals("none")){
+                    ArrayList<User> users = new ArrayList<>();
+                    users.add(new User("No items in inventory","", ""));
+
+                    userUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
+                    userPassword.setCellValueFactory(new PropertyValueFactory<>("password"));
+                    userIsAdmin.setCellValueFactory(new PropertyValueFactory<>("isAdmin"));
+
+                    userList.setItems(FXCollections.observableArrayList(users));
+                } else {
+                    String[] responses = response.split("\\|");
+
+                    userUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
+                    userPassword.setCellValueFactory(new PropertyValueFactory<>("password"));
+                    userIsAdmin.setCellValueFactory(new PropertyValueFactory<>("isAdmin"));
+
+                    ArrayList<User> users = new ArrayList<>();
+
+                    for (int i = 0; i < responses.length; i += 3) {
+                        users.add(new User(responses[i], responses[i + 1], responses[i + 2]));
+                    }
+
+                    userList.setItems(FXCollections.observableArrayList(users));
+                    userList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+                    userList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+                        if (userList.getSelectionModel().getSelectedItem() != null) {
+                            User user = newValue;
+                            this.userToRemove = user;
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                alert = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
+                e.printStackTrace();
+                alert.show();
+            }
+        }
+    }
+
+    public void adminRemoveUser(ActionEvent actionEvent) {
+        Alert alert;
+        try {
+            String response = client.sendRequest("adminRU|" + this.userToRemove.getUsername() + "|");
+            String[] responses = response.split("\\|");
+            alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+            alert.show();
+            adminTabUsersUpdate();
+        }
+        catch (IOException ioe){
+            alert = new Alert(Alert.AlertType.CONFIRMATION, ioe.getMessage(), ButtonType.OK);
+            alert.show();
+        }
+    }
+
+
 
     public void exitApplication(ActionEvent actionEvent) {
         Stage stage = (Stage) this.btnExit.getScene().getWindow();

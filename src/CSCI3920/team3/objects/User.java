@@ -6,9 +6,9 @@ public class User {
     private String username;
     private String password;
     private ArrayList<Item> rentedItems;
-    private boolean isAdmin;
+    private String isAdmin;
 
-    public User(String username, String password,  boolean isAdmin) {
+    public User(String username, String password,  String isAdmin) {
         this.username = username;
         this.password = password;
         this.rentedItems = new ArrayList<>();
@@ -39,11 +39,11 @@ public class User {
         this.rentedItems = rentedItems;
     }
 
-    public boolean isAdmin() {
+    public String getIsAdmin() {
         return isAdmin;
     }
 
-    public void setAdmin(boolean admin) {
+    public void setAdmin(String admin) {
         isAdmin = admin;
     }
 }
