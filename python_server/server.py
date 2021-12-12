@@ -189,7 +189,7 @@ class ClientWorker(Thread):
             # admin-client attempting removal of an Item
             elif arguments[0] == "adminR":
                 if len(self.__server.item_list) == 0:
-                    response += "none"
+                    response += "No items in inventory."
                 else:
                     is_found = False
                     for item in self.__server.item_list:
@@ -206,7 +206,7 @@ class ClientWorker(Thread):
             # admin-client attempting removal of an User
             elif arguments[0] == "adminRU":
                 if len(self.__server.user_list) == 0:
-                    response += "none"
+                    response += "No users available."
                 elif arguments[1] == current_user.username:
                     response += "Cannot remove self."
                 else:
@@ -267,25 +267,31 @@ class ClientWorker(Thread):
 
             # user-client attempting to return a rented item
             elif arguments[0] == "R":
-                for item in current_user.rented_items:
-                    if arguments[1] == item.name:
-                        response += "Item Returned!"
-                        current_user.return_item(item)
-                        self.__server.item_list.append(item)
-                        self.__server.update_users_and_items()
-                        break
+                if len(current_user.rented_items) == 0:
+                    response += "No items in user inventory."
+                else:
+                    for item in current_user.rented_items:
+                        if arguments[1] == item.name:
+                            response += "Item Returned!"
+                            current_user.return_item(item)
+                            self.__server.item_list.append(item)
+                            self.__server.update_users_and_items()
+                            break
                 response += "\n"
 
             # user-client attempting to [C]heck out (rent) and item
             elif arguments[0] == "C":
-                for item in self.__server.item_list:
-                    if arguments[1] == item.name:
-                        response += "Item Rented!"
-                        current_user.rent_item(item)
-                        self.__server.item_list.remove(item)
-                        self.__server.update_users_and_items()
+                if len(self.__server.item_list) == 0:
+                    response += "No items in inventory."
+                else:
+                    for item in self.__server.item_list:
+                        if arguments[1] == item.name:
+                            response += "Item Rented!"
+                            current_user.rent_item(item)
+                            self.__server.item_list.remove(item)
+                            self.__server.update_users_and_items()
 
-                        break
+                            break
                 response += "\n"
 
             # user-client requesting their rented items

@@ -31,6 +31,12 @@ public class Item {
         this.name = name;
     }
 
+    public String getPricePerDay() {
+        return pricePerDay;
+    }
+
+
+
     @Override
     public String toString() {
         return "Item{" +

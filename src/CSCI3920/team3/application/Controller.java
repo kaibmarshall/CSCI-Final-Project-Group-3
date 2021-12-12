@@ -273,11 +273,18 @@ public class Controller {
     public void returnSelectedItem(ActionEvent actionEvent){
         Alert alert;
         try {
-            String response = client.sendRequest("R|" + this.itemToReturn.getName() + "|");
-            String[] responses = response.split("\\|");
-            alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
-            alert.show();
-            userRentedItemsUpdate();
+            if (this.itemToReturn == null) {
+                alert = new Alert(Alert.AlertType.ERROR, "No item selected.", ButtonType.OK);
+                alert.show();
+                userRentedItemsUpdate();
+            }
+            else {
+                String response = client.sendRequest("R|" + this.itemToReturn.getName() + "|");
+                String[] responses = response.split("\\|");
+                alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+                alert.show();
+                userRentedItemsUpdate();
+            }
         }
         catch (IOException ioe){
             alert = new Alert(Alert.AlertType.CONFIRMATION, ioe.getMessage(), ButtonType.OK);
@@ -288,11 +295,18 @@ public class Controller {
     public void checkOutSelectedItem(ActionEvent actionEvent){
         Alert alert;
         try {
-            String response = client.sendRequest("C|" + this.itemToRent.getName() + "|");
-            String[] responses = response.split("\\|");
-            alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
-            alert.show();
-            listInventoryUpdate();
+            if (this.itemToRent == null) {
+                alert = new Alert(Alert.AlertType.ERROR, "No item selected.", ButtonType.OK);
+                alert.show();
+                userRentedItemsUpdate();
+            }
+            else {
+                String response = client.sendRequest("C|" + this.itemToRent.getName() + "|");
+                String[] responses = response.split("\\|");
+                alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+                alert.show();
+                listInventoryUpdate();
+            }
         }
         catch (IOException ioe){
             alert = new Alert(Alert.AlertType.CONFIRMATION, ioe.getMessage(), ButtonType.OK);
@@ -304,11 +318,18 @@ public class Controller {
     public void adminRemoveItem(ActionEvent actionEvent) {
         Alert alert;
         try {
-            String response = client.sendRequest("adminR|" + this.itemToRemove.getName() + "|");
-            String[] responses = response.split("\\|");
-            alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
-            alert.show();
-            adminListInventoryUpdate();
+            if (this.itemToRemove == null) {
+                alert = new Alert(Alert.AlertType.ERROR, "No item selected.", ButtonType.OK);
+                alert.show();
+                userRentedItemsUpdate();
+            }
+            else {
+                String response = client.sendRequest("adminR|" + this.itemToRemove.getName() + "|");
+                String[] responses = response.split("\\|");
+                alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+                alert.show();
+                adminListInventoryUpdate();
+            }
         }
         catch (IOException ioe){
             alert = new Alert(Alert.AlertType.CONFIRMATION, ioe.getMessage(), ButtonType.OK);
@@ -389,11 +410,18 @@ public class Controller {
     public void adminRemoveUser(ActionEvent actionEvent) {
         Alert alert;
         try {
-            String response = client.sendRequest("adminRU|" + this.userToRemove.getUsername() + "|");
-            String[] responses = response.split("\\|");
-            alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
-            alert.show();
-            adminTabUsersUpdate();
+            if (this.userToRemove == null) {
+                alert = new Alert(Alert.AlertType.ERROR, "No user selected.", ButtonType.OK);
+                alert.show();
+                userRentedItemsUpdate();
+            }
+            else {
+                String response = client.sendRequest("adminRU|" + this.userToRemove.getUsername() + "|");
+                String[] responses = response.split("\\|");
+                alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+                alert.show();
+                adminTabUsersUpdate();
+            }
         }
         catch (IOException ioe){
             alert = new Alert(Alert.AlertType.CONFIRMATION, ioe.getMessage(), ButtonType.OK);
