@@ -281,8 +281,13 @@ public class Controller {
             }
             else {
                 String response = client.sendRequest("R|" + this.itemToReturn.getName() + "|");
-                String[] responses = response.split("\\|");
-                alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+                if (response.equals("")) {
+                    alert = new Alert(Alert.AlertType.CONFIRMATION, "Item not found.\nRefreshing list...", ButtonType.OK);
+                }
+                else {
+                    String[] responses = response.split("\\|");
+                    alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+                }
                 alert.show();
                 itemToReturn = null;
                 userRentedItemsUpdate();
@@ -304,8 +309,13 @@ public class Controller {
             }
             else {
                 String response = client.sendRequest("C|" + this.itemToRent.getName() + "|");
-                String[] responses = response.split("\\|");
-                alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+                if (response.equals("")) {
+                    alert = new Alert(Alert.AlertType.CONFIRMATION, "Item not found.\nRefreshing list...", ButtonType.OK);
+                }
+                else {
+                    String[] responses = response.split("\\|");
+                    alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+                }
                 alert.show();
                 itemToRent = null;
                 listInventoryUpdate();
@@ -328,8 +338,13 @@ public class Controller {
             }
             else {
                 String response = client.sendRequest("adminR|" + this.itemToRemove.getName() + "|");
-                String[] responses = response.split("\\|");
-                alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+                if (response.equals("")) {
+                    alert = new Alert(Alert.AlertType.CONFIRMATION, "Item not found.\nRefreshing list...", ButtonType.OK);
+                }
+                else {
+                    String[] responses = response.split("\\|");
+                    alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+                }
                 itemToRemove = null;
                 alert.show();
                 adminListInventoryUpdate();
@@ -421,8 +436,13 @@ public class Controller {
             }
             else {
                 String response = client.sendRequest("adminRU|" + this.userToRemove.getUsername() + "|");
-                String[] responses = response.split("\\|");
-                alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+                if (response.equals("")) {
+                    alert = new Alert(Alert.AlertType.CONFIRMATION, "User not found.\nRefreshing list...", ButtonType.OK);
+                }
+                else {
+                    String[] responses = response.split("\\|");
+                    alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+                }
                 userToRemove = null;
                 alert.show();
                 adminTabUsersUpdate();
