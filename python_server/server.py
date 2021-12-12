@@ -138,11 +138,11 @@ class ClientWorker(Thread):
     def get_all_items(self):
         returnString = ""
         for item in self.__server.item_list:
-            returnString += item.name + "|" + "N/A" + "|" + str(item.price_per_day) + "|"
+            returnString += item.name + "|" + "N/A" + "|" + "${:.2f}".format(item.price_per_day) + "|"
         for user in self.__server.user_list:
             if len(user.rented_items) != 0:
                 for item in user.rented_items:
-                    returnString += item.name + "|" + user.username + "|" + str(item.price_per_day) + "|"
+                    returnString += item.name + "|" + user.username + "|" + "${:.2f}".format(item.price_per_day) + "|"
         return returnString
 
     def _process_client_request(self):
@@ -175,7 +175,7 @@ class ClientWorker(Thread):
                     response += "none"
                 else:
                     for item in self.__server.item_list:
-                        response += item.name + "|" + str(item.price_per_day) + "|"
+                        response += item.name + "|" + "${:.2f}".format(item.price_per_day) + "|"
                 response += "\n"
 
             # admin-client requesting all items
@@ -237,12 +237,24 @@ class ClientWorker(Thread):
 
             # admin-client attempting addition of Item
             elif arguments[0] == "adminA":
-                is_valid = True
-                for item in self.__server.item_list:
-                    if item.name == arguments[1]:
-                        response += "Items can't have the same name."
-                        is_valid = False
-                        break
+                is_valid = False
+                if arguments[1] == "" or arguments[2] == "":
+                    response += "Both Item Name and Price Per Day must not be empty."
+                else:
+                    try:
+                        (float(arguments[2].strip('$')))
+                    except ValueError:
+                        response += "Price Per Day must be a number.\n"
+                        self._send_message(response)
+                        return
+
+                    for item in self.__server.item_list:
+                        if item.name == arguments[1]:
+                            response += "Items can't have the same name.\n"
+                            self._send_message(response)
+                            return
+
+                    is_valid = True
 
                 if is_valid:
                     self.__server.item_list.append(Item(arguments[1], float(arguments[2].strip('$'))))
@@ -253,6 +265,9 @@ class ClientWorker(Thread):
             # admin-client attempting addition of User
             elif arguments[0] == "adminAU":
                 is_valid = True
+                if arguments[1] == "" or arguments[2] == "":
+                    response += "Both Username and Password must not be empty."
+                    is_valid = False
                 for user in self.__server.user_list:
                     if user.username == arguments[1]:
                         response += "Users can't have the same username."
@@ -303,7 +318,7 @@ class ClientWorker(Thread):
                     response = "none"
                 else:
                     for item in current_user.rented_items:
-                        response += item.name + "|" + str(item.price_per_day) + "|"
+                        response += item.name + "|" + "${:.2f}".format(item.price_per_day) + "|"
 
                 response += "\n"
 
