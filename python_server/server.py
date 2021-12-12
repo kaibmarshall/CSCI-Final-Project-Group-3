@@ -1,8 +1,9 @@
 import socket
 from datetime import date
 from threading import Thread
-from objects import Item
-from objects import User
+from objects import Item, User
+import pickle
+
 class MultiServer:
     def __init__(self, ip: str, port: int, backlog: int):
         self.__ip = ip
@@ -23,23 +24,39 @@ class MultiServer:
         self.__keep__running = False
         self.__server_socket.close()
 
-    def populate_users_for_testing(self):
-        user = User("kai", "pass", True)
-        user.rent_item(Item("Macbook Air", 12.99))
-        user.rent_item(Item("Seagate SSD", 12.99))
+    def add_default_admins(self):
+        admin = User("kai.marshall", "password", True)
+        admin2 = User("kyung.youm", "password", True)
+        admin3 = User("ahmed.aldallee", "password", True)
 
-        self._user_list.append(user)
-        self._user_list.append(User("cp", "pass", False))
+        self._user_list.append(admin)
+        self._user_list.append(admin2)
+        self._user_list.append(admin3)
 
-    def populate_items_for_testing(self):
-        self._item_list.append(Item("Macbook Pro", 12.99))
-        self._item_list.append(Item("Windows Laptop", 10.99))
+    def load_users_and_items(self):
+        with open('user_data', 'rb') as file:
+            self._user_list = pickle.load(file)
+            file.close()
 
+        with open('item_data', 'rb') as file:
+            self._item_list = pickle.load(file)
+            file.close()
 
+    def update_users_and_items(self):
+        with open('user_data', 'wb') as file:
+            pickle.dump(self._user_list, file)
+
+        with open('item_data', 'wb') as file:
+            pickle.dump(self._item_list, file)
 
     def run(self):
-        self.populate_users_for_testing()
-        self.populate_items_for_testing()
+
+        try:
+            self.load_users_and_items()
+        except EOFError:
+            self.add_default_admins()
+            self.update_users_and_items()
+
 
         self.__server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__server_socket.bind((self.__ip, self.__port))
@@ -179,6 +196,7 @@ class ClientWorker(Thread):
                     for item in self.__server.item_list:
                         if item.name == arguments[1]:
                             self.__server.item_list.remove(item)
+                            self.__server.update_users_and_items()
                             is_found = True
                             response += "Item Successfully Removed!"
                             break
@@ -200,6 +218,7 @@ class ClientWorker(Thread):
                                 self.__server.item_list.append(item)
 
                             self.__server.user_list.remove(user)
+                            self.__server.update_users_and_items()
                             is_found = True
                             response += "User Successfully Removed!"
                             break
@@ -228,6 +247,7 @@ class ClientWorker(Thread):
 
                 if is_valid:
                     self.__server.item_list.append(Item(arguments[1], float(arguments[2].strip('$'))))
+                    self.__server.update_users_and_items()
                     response += "Item successfully added!"
                 response += "\n"
 
@@ -242,6 +262,7 @@ class ClientWorker(Thread):
 
                 if is_valid:
                     self.__server.user_list.append(User(arguments[1], arguments[2], False))
+                    self.__server.update_users_and_items()
                     response += "User successfully added!"
                 response += "\n"
 
@@ -252,6 +273,7 @@ class ClientWorker(Thread):
                         response += "Item Returned!"
                         current_user.return_item(item)
                         self.__server.item_list.append(item)
+                        self.__server.update_users_and_items()
                         break
                 response += "\n"
 
@@ -262,6 +284,8 @@ class ClientWorker(Thread):
                         response += "Item Rented!"
                         current_user.rent_item(item)
                         self.__server.item_list.remove(item)
+                        self.__server.update_users_and_items()
+
                         break
                 response += "\n"
 
@@ -285,8 +309,11 @@ class ClientWorker(Thread):
                 self.terminate_connection()
                 return
 
+            # server terminate
             elif arguments[0] == "TERMINATE":
-                response = "OK\n"
+                response = "Server Shutdown\n"
+                self._send_message(response)
+                self.__server.terminate_server()
 
             else:
                 response = "ERR|Unknown Command\n"
