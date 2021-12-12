@@ -222,7 +222,7 @@ class ClientWorker(Thread):
                             response += "User Successfully Removed!"
                             break
                     if not is_found:
-                        response += "User not found."
+                        response += ""
 
                 response += "\n"
 
