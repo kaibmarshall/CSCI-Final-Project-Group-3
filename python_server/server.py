@@ -99,7 +99,7 @@ class MultiServer:
 
 
 class ClientWorker(Thread):
-    def __init__(self, client_id: int, client_socket: socket, server: MultiServer, currentUser = None):
+    def __init__(self, client_id: int, client_socket: socket, server: MultiServer):
         super().__init__()
 
         self.__client_socket = client_socket
@@ -112,7 +112,6 @@ class ClientWorker(Thread):
         return self.__id
 
     def run(self):
-        #self._send_message("Connected to Python Inventory Server")
 
         while self.__keep_running_client:
             self._process_client_request()

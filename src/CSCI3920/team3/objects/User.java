@@ -43,7 +43,4 @@ public class User {
         return isAdmin;
     }
 
-    public void setAdmin(String admin) {
-        isAdmin = admin;
-    }
 }

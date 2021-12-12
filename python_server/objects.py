@@ -1,9 +1,8 @@
 
 class Item:
-    def __init__(self, name :str, price_per_day :float):
+    def __init__(self, name: str, price_per_day: float):
         self._name = name
         self._price_per_day = price_per_day
-        self._is_available = True
 
     @property
     def name(self):
@@ -13,17 +12,9 @@ class Item:
     def price_per_day(self):
         return self._price_per_day
 
-    @property
-    def is_available(self):
-        return self._is_available
-
-    @property
-    def set_availability(self, value :bool):
-        self._is_available = value
-
 
 class User:
-    def __init__(self, username :str, password :str, isAdmin :bool):
+    def __init__(self, username: str, password: str, isAdmin: bool):
         self._username = username
         self._password = password
         self._is_admin = isAdmin
