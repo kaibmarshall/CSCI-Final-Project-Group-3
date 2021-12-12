@@ -53,6 +53,7 @@ public class Controller {
     public TextField txtAddUserUsername;
     public TextField txtAddUserPassword;
     public Button btnAddUser;
+    public Button SearchItem;
 
     public Item itemToReturn;
     public Item itemToRent;
@@ -95,7 +96,7 @@ public class Controller {
                 if (userIsAdmin) {
                     Stage adminStage = new Stage();
                     Parent root = FXMLLoader.load(getClass().getResource("application-admin.fxml"));
-                    adminStage.setTitle("University Application");
+                    adminStage.setTitle("IT Inventory Rental System");
                     adminStage.setScene(new Scene(root, 1080, 720)); //1080x720 for main
                     adminStage.show();
 
@@ -106,7 +107,7 @@ public class Controller {
                 } else {
                     Stage userStage = new Stage();
                     Parent root = FXMLLoader.load(getClass().getResource("application-user.fxml"));
-                    userStage.setTitle("University Application");
+                    userStage.setTitle("IT Inventory Rental System");
                     userStage.setScene(new Scene(root, 1080, 720)); //1080x720 for main
                     userStage.show();
 
@@ -283,6 +284,7 @@ public class Controller {
                 String[] responses = response.split("\\|");
                 alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
                 alert.show();
+                itemToReturn = null;
                 userRentedItemsUpdate();
             }
         }
@@ -305,6 +307,7 @@ public class Controller {
                 String[] responses = response.split("\\|");
                 alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
                 alert.show();
+                itemToRent = null;
                 listInventoryUpdate();
             }
         }
@@ -327,6 +330,7 @@ public class Controller {
                 String response = client.sendRequest("adminR|" + this.itemToRemove.getName() + "|");
                 String[] responses = response.split("\\|");
                 alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+                itemToRemove = null;
                 alert.show();
                 adminListInventoryUpdate();
             }
@@ -419,6 +423,7 @@ public class Controller {
                 String response = client.sendRequest("adminRU|" + this.userToRemove.getUsername() + "|");
                 String[] responses = response.split("\\|");
                 alert = new Alert(Alert.AlertType.CONFIRMATION, responses[0], ButtonType.OK);
+                userToRemove = null;
                 alert.show();
                 adminTabUsersUpdate();
             }
@@ -466,6 +471,20 @@ public class Controller {
         }
         Stage stage = (Stage) this.btnExit.getScene().getWindow();
         stage.close();
+    }
+
+    //not yet implemented
+    public void searchItem(ActionEvent actionEvent){
+        Alert alert;
+        alert = new Alert(Alert.AlertType.ERROR, "Search not yet implemented", ButtonType.OK);
+        alert.show();
+    }
+
+    //not yet implemented
+    public void searchUser(ActionEvent actionEvent){
+        Alert alert;
+        alert = new Alert(Alert.AlertType.ERROR, "Search not yet implemented", ButtonType.OK);
+        alert.show();
     }
 
 
