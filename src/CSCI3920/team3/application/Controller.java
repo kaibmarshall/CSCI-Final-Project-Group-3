@@ -137,6 +137,7 @@ public class Controller {
 
     public void listInventoryUpdate() {
         Alert alert;
+        this.itemToRent = null;
 
         if (this.tabListInventory.isSelected()) {
             try {
@@ -181,6 +182,7 @@ public class Controller {
 
     public void adminListInventoryUpdate() {
         Alert alert;
+        this.itemToRemove = null;
 
         if (this.tabListInventory.isSelected()) {
             try {
@@ -227,6 +229,7 @@ public class Controller {
 
     public void userRentedItemsUpdate() {
         Alert alert;
+        this.itemToReturn = null;
 
         if (this.tabUserInfo.isSelected()) {
             try {
@@ -382,6 +385,7 @@ public class Controller {
 
     public void adminTabUsersUpdate() {
         Alert alert;
+        this.userToRemove = null;
 
         if (this.tabUsers.isSelected()) {
             try {
