@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
@@ -9,6 +10,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
 
 <GridPane alignment="center" hgap="10" prefHeight="384.0" prefWidth="551.0" vgap="10" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CSCI3920.team3.application.Controller">
     <columnConstraints>
@@ -48,7 +50,11 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                         </GridPane>
-                                        <TextField fx:id="txtPassword" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <PasswordField fx:id="txtPassword" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </PasswordField>
                                     </children>
                                 </GridPane>
                                 <Label layoutX="39.0" layoutY="121.0" text="Username" />

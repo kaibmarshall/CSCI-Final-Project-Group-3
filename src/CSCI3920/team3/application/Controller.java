@@ -26,7 +26,7 @@ import java.util.ArrayList;
 public class Controller {
 
     public TextField txtUsername;
-    public TextField txtPassword;
+    public PasswordField txtPassword;
     public Button btnLogin;
     public Button btnExit;
     public TableView<Item> inventoryList;
@@ -56,7 +56,6 @@ public class Controller {
     public TextField txtAddUserUsername;
     public TextField txtAddUserPassword;
     public Button btnAddUser;
-    public Button SearchItem;
     public TextField searchItemText;
     public TextField searchUserRentedItems;
     public TextField adminSearchItemText;
