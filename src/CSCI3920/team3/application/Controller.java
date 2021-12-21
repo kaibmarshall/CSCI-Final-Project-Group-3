@@ -3,6 +3,9 @@ package CSCI3920.team3.application;
 import CSCI3920.team3.client.Client;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -54,6 +57,10 @@ public class Controller {
     public TextField txtAddUserPassword;
     public Button btnAddUser;
     public Button SearchItem;
+    public TextField searchItemText;
+    public TextField searchUserRentedItems;
+    public TextField adminSearchItemText;
+    public TextField adminSearchUsersText;
 
     public Item itemToReturn;
     public Item itemToRent;
@@ -123,9 +130,10 @@ public class Controller {
                 cleanLoginPage();
             }
         }
-        catch (IOException ioe) {
-            alert = new Alert(Alert.AlertType.CONFIRMATION, ioe.getMessage(), ButtonType.OK);
+        catch (Exception ioe) {
+            alert = new Alert(Alert.AlertType.ERROR, "Cannot connect to server.", ButtonType.OK);
             alert.show();
+            cleanLoginPage();
         }
 
     }
@@ -162,8 +170,34 @@ public class Controller {
                         items.add(new Item(responses[i], responses[i + 1]));
                     }
 
-                    inventoryList.setItems(FXCollections.observableArrayList(items));
-                    inventoryList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+                    ObservableList<Item> itemOAL = FXCollections.observableArrayList(items);
+                    inventoryList.setItems(itemOAL);
+                    inventoryList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+                    FilteredList<Item> filteredItems = new FilteredList<>(itemOAL, b -> true);
+                    searchItemText.textProperty().addListener((observable, oldValue, newValue) -> {
+
+                        filteredItems.setPredicate(item ->{
+                            if (newValue == null || newValue.isEmpty()) {
+                                return true;
+                            }
+
+                            String lowerCaseFilter = newValue.toLowerCase();
+
+                            if (item.getName().toLowerCase().contains(lowerCaseFilter)) {
+                                return true;
+                            } else if (item.getPricePerDay().toLowerCase().contains(lowerCaseFilter)) {
+                                return true;
+                            }
+                            else {
+                                return false;
+                            }
+                        });
+                    });
+
+                    SortedList<Item> sortedItems = new SortedList<>(filteredItems);
+                    sortedItems.comparatorProperty().bind(inventoryList.comparatorProperty());
+                    inventoryList.setItems(sortedItems);
 
                     inventoryList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
                         //Check whether item is selected and set value of selected item to Label
@@ -209,8 +243,36 @@ public class Controller {
                         items.add(new Item(responses[i], responses[i + 1], responses[i + 2]));
                     }
 
-                    adminInventoryList.setItems(FXCollections.observableArrayList(items));
+                    ObservableList<Item> itemOAL = FXCollections.observableArrayList(items);
+                    adminInventoryList.setItems(itemOAL);
                     adminInventoryList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+                    FilteredList<Item> filteredItems = new FilteredList<>(itemOAL, b -> true);
+                    adminSearchItemText.textProperty().addListener((observable, oldValue, newValue) -> {
+
+                        filteredItems.setPredicate(item ->{
+                            if (newValue == null || newValue.isEmpty()) {
+                                return true;
+                            }
+
+                            String lowerCaseFilter = newValue.toLowerCase();
+
+                            if (item.getName().toLowerCase().contains(lowerCaseFilter)) {
+                                return true;
+                            } else if (item.getPricePerDay().toLowerCase().contains(lowerCaseFilter)) {
+                                return true;
+                            } else if (item.getUserRentedTo().toLowerCase().contains(lowerCaseFilter)) {
+                                return true;
+                            }
+                            else {
+                                return false;
+                            }
+                        });
+                    });
+
+                    SortedList<Item> sortedItems = new SortedList<>(filteredItems);
+                    sortedItems.comparatorProperty().bind(adminInventoryList.comparatorProperty());
+                    adminInventoryList.setItems(sortedItems);
 
                     adminInventoryList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
                         if (adminInventoryList.getSelectionModel().getSelectedItem() != null) {
@@ -252,9 +314,34 @@ public class Controller {
                         items.add(new Item(responses[i], responses[i + 1]));
                     }
 
-
-                    userRentedItems.setItems(FXCollections.observableArrayList(items));
+                    ObservableList<Item> itemOAL = FXCollections.observableArrayList(items);
+                    userRentedItems.setItems(itemOAL);
                     userRentedItems.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+                    FilteredList<Item> filteredItems = new FilteredList<>(itemOAL, b -> true);
+                    searchUserRentedItems.textProperty().addListener((observable, oldValue, newValue) -> {
+
+                        filteredItems.setPredicate(item ->{
+                            if (newValue == null || newValue.isEmpty()) {
+                                return true;
+                            }
+
+                            String lowerCaseFilter = newValue.toLowerCase();
+
+                            if (item.getName().toLowerCase().contains(lowerCaseFilter)) {
+                                return true;
+                            } else if (item.getPricePerDay().toLowerCase().contains(lowerCaseFilter)) {
+                                return true;
+                            }
+                            else {
+                                return false;
+                            }
+                        });
+                    });
+
+                    SortedList<Item> sortedItems = new SortedList<>(filteredItems);
+                    sortedItems.comparatorProperty().bind(userRentedItems.comparatorProperty());
+                    userRentedItems.setItems(sortedItems);
 
                     userRentedItems.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
                         //Check whether item is selected and set value of selected item to Label
@@ -412,8 +499,36 @@ public class Controller {
                         users.add(new User(responses[i], responses[i + 1], responses[i + 2]));
                     }
 
-                    userList.setItems(FXCollections.observableArrayList(users));
+                    ObservableList<User> usersOAL = FXCollections.observableArrayList(users);
+                    userList.setItems(usersOAL);
                     userList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+                    FilteredList<User> filteredUsers = new FilteredList<>(usersOAL, b -> true);
+                    adminSearchUsersText.textProperty().addListener((observable, oldValue, newValue) -> {
+
+                        filteredUsers.setPredicate(user ->{
+                            if (newValue == null || newValue.isEmpty()) {
+                                return true;
+                            }
+
+                            String lowerCaseFilter = newValue.toLowerCase();
+
+                            if (user.getUsername().toLowerCase().contains(lowerCaseFilter)) {
+                                return true;
+                            } else if (user.getPassword().toLowerCase().contains(lowerCaseFilter)) {
+                                return true;
+                            } else if (user.getIsAdmin().toLowerCase().contains(lowerCaseFilter)) {
+                                return true;
+                            }
+                            else {
+                                return false;
+                            }
+                        });
+                    });
+
+                    SortedList<User> sortedUsers = new SortedList<>(filteredUsers);
+                    sortedUsers.comparatorProperty().bind(userList.comparatorProperty());
+                    userList.setItems(sortedUsers);
 
                     userList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
                         if (userList.getSelectionModel().getSelectedItem() != null) {
